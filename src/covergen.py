@@ -225,8 +225,8 @@ if __name__ == '__main__':
                             compressor_ratio, compressor_threshold, low_shelf_gain, high_shelf_gain, noise_gate_threshold,
                             noise_gate_ratio, noise_gate_attack, noise_gate_release])
 
-        with gr.Tab('Model Downloader'):
-            with gr.Tab('Download from Link'):
+        with gr.Tab('RVC Model Options'):
+            with gr.Tab('Download Models from Link'):
                 with gr.Row():
                     with gr.Column(variant='panel'):
                         gr.HTML("<center><h3>Enter a link to the ZIP archive in the field below.</h3></center>")
@@ -241,7 +241,7 @@ if __name__ == '__main__':
                 dl_output_message = gr.Text(label='Output Message', interactive=False)
                 download_btn.click(download_from_url, inputs=[model_zip_link, model_name], outputs=dl_output_message)
 
-            with gr.Tab('Upload a ZIP archive'):
+            with gr.Tab('Upload a ZIP archive Models'):
                 with gr.Row(equal_height=False):
                     with gr.Column(variant='panel'):
                         zip_file = gr.File(label='Zip File', file_types=['.zip'], file_count='single')
@@ -256,7 +256,7 @@ if __name__ == '__main__':
                 local_upload_output_message = gr.Text(label='Output Message', interactive=False)
                 model_upload_button.click(upload_zip_model, inputs=[zip_file, local_model_name], outputs=local_upload_output_message)
 
-            with gr.Tab('Upload files'):
+            with gr.Tab('Upload files Models'):
                 with gr.Group():
                     with gr.Row():
                         pth_file = gr.File(label='.pth file', file_types=['.pth'], file_count='single')
