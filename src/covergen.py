@@ -49,7 +49,7 @@ if __name__ == '__main__':
                 gr.HTML("<center><h2><a href='https://t.me/pol1trees'>Telegram Channel</a></h2></center>")
                 gr.HTML("<center><h2><a href='https://t.me/+GMTP7hZqY0E4OGRi'>Telegram Chat</a></h2></center>")
             with gr.Column(variant='panel'):
-                gr.HTML("<center><h2><a href='https://www.youtube.com/channel/UCHb3fZEVxUisnqLqCrEM8ZA'>YouTube</a></h2></center>")
+                gr.HTML("<center><h2><a href='https://www.youtube.com/@Politrees?sub_confirmation=1'>YouTube</a></h2></center>")
                 gr.HTML("<center><h2><a href='https://github.com/Bebra777228'>GitHub</a></h2></center>")
 
         with gr.Tab("Voice Conversion"):
