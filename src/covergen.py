@@ -28,30 +28,15 @@ if __name__ == '__main__':
     voice_models = ignore_files(rvc_models_dir)
 
     with gr.Blocks(
-        title="CoverGen Lite - Politrees",
+        title="CoverGen Lite",
         css="footer{display:none !important}",
-        theme=gr.themes.Soft(
-            primary_hue="green",
-            secondary_hue="green",
-            neutral_hue="neutral",
-            spacing_size="sm",
-            radius_size="lg",
-        )) as app:
+        theme="gradio/soft") as app:
         
         if warning:
             with gr.Column(variant='panel'):
                 gr.HTML("<center><h2>This space is running too slow due to a weak server, so I made a Google Colab notebook to work faster with this interface: <a href='https://colab.research.google.com/drive/1HzuPgICRrjqUWQWb5Zn-l07m099-n-Nr'>Google Colab Notebook</a>.</h2></center>")
         
-        with gr.Tab("Welcome/Contacts"):
-            gr.HTML("<center><h1>Welcome to CoverGen Lite - Politrees</h1></center>")
-            with gr.Column(variant='panel'):
-                gr.HTML("<center><h2><a href='https://t.me/Politrees2'>Telegram</a></h2></center>")
-                gr.HTML("<center><h2><a href='https://t.me/pol1trees'>Telegram Channel</a></h2></center>")
-                gr.HTML("<center><h2><a href='https://t.me/+GMTP7hZqY0E4OGRi'>Telegram Chat</a></h2></center>")
-            with gr.Column(variant='panel'):
-                gr.HTML("<center><h2><a href='https://www.youtube.com/@Politrees?sub_confirmation=1'>YouTube</a></h2></center>")
-                gr.HTML("<center><h2><a href='https://github.com/Bebra777228'>GitHub</a></h2></center>")
-
+    
         with gr.Tab("Voice Conversion"):
             with gr.Row(equal_height=False):
                 with gr.Column(scale=1, variant='panel'):
