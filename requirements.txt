@@ -20,7 +20,7 @@ einops
 local-attention
 
 # Interfaces and cloud services
-gradio==5.3.0
+gradio==3.49.0
 mega.py
 wget
 gdown
