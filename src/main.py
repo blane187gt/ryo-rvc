@@ -1,18 +1,22 @@
 import gc
 import hashlib
 import os
+import gradio as gr
+from audio_separator.separator import Separator
 import shlex
 import subprocess
 import librosa
 import torch
 import numpy as np
 import soundfile as sf
-import gradio as gr
 from rvc import Config, load_hubert, get_vc, rvc_infer
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 RVC_MODELS_DIR = os.path.join(BASE_DIR, 'rvc_models')
 OUTPUT_DIR = os.path.join(BASE_DIR, 'song_output')
+output_dir = os.path.join(BASE_DIR, 'uvr_output')
+
+
 
 def get_rvc_model(voice_model):
     model_dir = os.path.join(RVC_MODELS_DIR, voice_model)
@@ -65,9 +69,32 @@ def voice_change(voice_model, vocals_path, output_path, pitch_change, f0_method,
 def song_cover_pipeline(uploaded_file, voice_model, pitch_change, index_rate=0.5, filter_radius=3, rms_mix_rate=0.25, f0_method='rmvpe',
                         crepe_hop_length=128, protect=0.33, output_format='mp3', progress=gr.Progress(), f0_min=50, f0_max=1100):
 
+
+
     if not uploaded_file or not voice_model:
         raise ValueError('Make sure that the song input field and voice model field are filled in.')
 
+
+    display_progress(0.8, '[~]  Separating audios...', progress)
+
+    separator = Separator(output_dir=output_dir)
+    
+    # Load the model
+    separator.load_model(model_filename='model_bs_roformer_ep_317_sdr_12.9755.ckpt')
+    
+    # Separate into vocal and instrumental
+    voc_inst = separator.separate(uploaded_file.name)
+    
+    # Set file paths for the output
+    vocals = os.path.join(output_dir, 'Vocals.wav')
+    instrumental = os.path.join(output_dir, 'Instrumental.wav')
+    
+    # Rename the separated files to match expected output
+    os.rename(os.path.join(output_dir, voc_inst[0]), instrumental)
+    os.rename(os.path.join(output_dir, voc_inst[1]), vocals)
+
+
+    
     display_progress(0, '[~] Starting the AI cover generation pipeline...', progress)
 
     if not os.path.exists(uploaded_file):
@@ -77,7 +104,7 @@ def song_cover_pipeline(uploaded_file, voice_model, pitch_change, index_rate=0.5
     song_dir = os.path.join(OUTPUT_DIR, song_id)
     os.makedirs(song_dir, exist_ok=True)
 
-    orig_song_path = convert_to_stereo(uploaded_file)
+    orig_song_path = convert_to_stereo(vocals)
     ai_cover_path = os.path.join(song_dir, f'Converted_Voice.{output_format}')
 
     if os.path.exists(ai_cover_path):
