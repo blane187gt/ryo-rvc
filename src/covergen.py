@@ -28,7 +28,7 @@ if __name__ == '__main__':
     voice_models = ignore_files(rvc_models_dir)
 
     with gr.Blocks(
-        title="CoverGen Lite",
+        title="Ryo RVC",
         css="footer{display:none !important}",
         theme="gradio/soft") as app:
         
@@ -67,10 +67,9 @@ if __name__ == '__main__':
                 show_enter_button.click(swap_buttons, outputs=[show_enter_button, show_upload_button])
 
             with gr.Group():
-                with gr.Row():
-                    generate_btn = gr.Button("Generate", variant="primary", scale=2)
-                    converted_voice = gr.Audio(label='Converted Voice', scale=9)
-                    output_format = gr.Dropdown(['mp3', 'flac', 'wav'], value='mp3', label='File Format', allow_custom_value=False, filterable=False, scale=1)
+                generate_btn = gr.Button("Generate", variant="primary", scale=2)
+                converted_voice = gr.Audio(label='Converted Voice', scale=9)
+                output_format = gr.Dropdown(['mp3', 'flac', 'wav'], value='mp3', label='File Format', allow_custom_value=False, filterable=False, scale=1)
 
             with gr.Accordion('Voice Conversion Settings', open=False):
                 with gr.Group():
@@ -94,122 +93,7 @@ if __name__ == '__main__':
                               inputs=[song_input, rvc_model, pitch, index_rate, filter_radius, rms_mix_rate, f0_method, crepe_hop_length, protect, output_format],
                               outputs=[converted_voice])
 
-        with gr.Tab('Merge/Process'):
-            with gr.Row(equal_height=False):
-                with gr.Column(variant='panel'):
-                    with gr.Column() as upload_voc_file:
-                        with gr.Group():
-                            vocal_audio = gr.Audio(label='Vocals', interactive=False, show_download_button=False, show_share_button=False)
-                            upload_vocal_audio = gr.UploadButton(label='Upload Vocals', file_types=['audio'], variant='primary')
-
-                    with gr.Column(visible=False) as enter_local_voc_file:
-                        vocal_input = gr.Text(label='Vocal file path', info='Enter the full path to the local vocal file.')
-
-                    with gr.Column():
-                        show_upload_voc_button = gr.Button('Uploading a file from your device', visible=False)
-                        show_enter_voc_button = gr.Button('Entering the path to the local file')
-                
-                upload_vocal_audio.upload(process_file_upload, inputs=[upload_vocal_audio], outputs=[vocal_input, vocal_audio])
-                upload_vocal_audio.upload(update_button_text_voc, outputs=[upload_vocal_audio])
-                show_upload_voc_button.click(swap_visibility, outputs=[upload_voc_file, enter_local_voc_file, vocal_input, vocal_audio])
-                show_enter_voc_button.click(swap_visibility, outputs=[enter_local_voc_file, upload_voc_file, vocal_input, vocal_audio])
-                show_upload_voc_button.click(swap_buttons, outputs=[show_upload_voc_button, show_enter_voc_button])
-                show_enter_voc_button.click(swap_buttons, outputs=[show_enter_voc_button, show_upload_voc_button])
-
-                with gr.Column(variant='panel'):
-                    with gr.Column() as upload_inst_file:
-                        with gr.Group():
-                            instrumental_audio = gr.Audio(label='Instrumental', interactive=False, show_download_button=False, show_share_button=False)
-                            upload_instrumental_audio = gr.UploadButton(label='Upload Instrumental', file_types=['audio'], variant='primary')
-
-                    with gr.Column(visible=False) as enter_local_inst_file:
-                        instrumental_input = gr.Text(label='Instrumental file path', info='Enter the full path to the local instrumental file.')
-
-                    with gr.Column():
-                        show_upload_inst_button = gr.Button('Uploading a file from your device', visible=False)
-                        show_enter_inst_button = gr.Button('Entering the path to the local file')
-                
-                upload_instrumental_audio.upload(process_file_upload, inputs=[upload_instrumental_audio], outputs=[instrumental_input, instrumental_audio])
-                upload_instrumental_audio.upload(update_button_text_inst, outputs=[upload_instrumental_audio])
-                show_upload_inst_button.click(swap_visibility, outputs=[upload_inst_file, enter_local_inst_file, instrumental_input, instrumental_audio])
-                show_enter_inst_button.click(swap_visibility, outputs=[enter_local_inst_file, upload_inst_file, instrumental_input, instrumental_audio])
-                show_upload_inst_button.click(swap_buttons, outputs=[show_upload_inst_button, show_enter_inst_button])
-                show_enter_inst_button.click(swap_buttons, outputs=[show_enter_inst_button, show_upload_inst_button])
-
-            with gr.Group():
-                with gr.Row():
-                    process_btn = gr.Button("Process", variant='primary', scale=2)
-                    ai_cover = gr.Audio(label='AI-Cover', scale=9)
-                    output_format = gr.Dropdown(['mp3', 'flac', 'wav'], value='mp3', label='File Format', allow_custom_value=False, filterable=False, scale=1)
-
-            with gr.Accordion('Audio Mixing Settings', open=False):
-                gr.HTML('<center><h2>Volume Adjustment</h2></center>')
-                with gr.Row(variant='panel'):
-                    vocal_gain = gr.Slider(-10, 10, value=0, step=1, label='Vocals', scale=1)
-                    instrumental_gain = gr.Slider(-10, 10, value=0, step=1, label='Instrumental', scale=1)
-                    clear_btn = gr.Button("Clear All Effects", scale=0.1)
-
-                with gr.Accordion('Effects', open=False):
-                    with gr.Accordion('Reverb', open=False):
-                        with gr.Group():
-                            with gr.Column(variant='panel'):
-                                with gr.Row():
-                                    reverb_rm_size = gr.Slider(0, 1, value=0.15, label='Room Size', info='This parameter determines the size of the virtual room in which the reverb will sound. A higher value means a larger room and a longer reverb tail.')
-                                    reverb_width = gr.Slider(0, 1, value=1.0, label='Reverb Width', info='This parameter determines the width of the reverb sound. The higher the value, the wider the reverb sound.')
-                                with gr.Row():
-                                    reverb_wet = gr.Slider(0, 1, value=0.1, label='Wet Level', info='This parameter determines the level of reverb. The higher the value, the stronger the reverb effect and the longer the "tail".')
-                                    reverb_dry = gr.Slider(0, 1, value=0.8, label='Dry Level', info='This parameter determines the level of the original sound without reverb. The lower the value, the quieter the AI voice. If the value is 0, the original sound will disappear completely.')
-                                with gr.Row():
-                                    reverb_damping = gr.Slider(0, 1, value=0.7, label='Damping Level', info='This parameter determines the absorption of high frequencies in the reverb. The higher the value, the stronger the absorption of frequencies and the less "bright" the reverb sound.')
-
-                    with gr.Accordion('Chorus', open=False):
-                        with gr.Group():
-                            with gr.Column(variant='panel'):
-                                with gr.Row():
-                                    chorus_rate_hz = gr.Slider(0.1, 10, value=0, label='Chorus Rate', info='This parameter determines the speed of the chorus effect in hertz. The higher the value, the faster the sounds will oscillate.')
-                                    chorus_depth = gr.Slider(0, 1, value=0, label='Chorus Depth', info='This parameter determines the depth of the chorus effect. The higher the value, the stronger the chorus effect.')
-                                with gr.Row():
-                                    chorus_centre_delay_ms = gr.Slider(0, 50, value=0, label='Centre Delay (ms)', info='This parameter determines the delay of the central signal of the chorus effect in milliseconds. The higher the value, the longer the delay.')
-                                    chorus_feedback = gr.Slider(0, 1, value=0, label='Feedback', info='This parameter determines the level of feedback of the chorus effect. The higher the value, the stronger the feedback effect.')
-                                with gr.Row():
-                                    chorus_mix = gr.Slider(0, 1, value=0, label='Mix', info='This parameter determines the level of mixing the original signal and the chorus effect. The higher the value, the stronger the chorus effect.')
-
-                with gr.Accordion('Processing', open=False):
-                    with gr.Accordion('Compressor', open=False):
-                        with gr.Row(variant='panel'):
-                            compressor_ratio = gr.Slider(1, 20, value=4, label='Ratio', info='This parameter controls the amount of compression applied to the audio. A higher value means more compression, which reduces the dynamic range of the audio, making loud parts quieter and quiet parts louder.')
-                            compressor_threshold = gr.Slider(-60, 0, value=-16, label='Threshold', info='This parameter sets the threshold level in decibels below which the compressor begins to operate. The compressor compresses loud sounds to make the sound more even. The lower the threshold, the more sounds will be subject to compression.')
-
-                    with gr.Accordion('Filters', open=False):
-                        with gr.Row(variant='panel'):
-                            low_shelf_gain = gr.Slider(-20, 20, value=0, label='Low Shelf Filter', info='This parameter controls the gain (volume) of low frequencies. A positive value boosts low frequencies, making the sound bassier. A negative value cuts low frequencies, making the sound brighter.')
-                            high_shelf_gain = gr.Slider(-20, 20, value=0, label='High Shelf Filter', info='This parameter controls the gain of high frequencies. A positive value boosts high frequencies, making the sound brighter. A negative value cuts high frequencies, making the sound duller.')
-
-                    with gr.Accordion('Noise Gate', open=False):
-                        with gr.Group():
-                            with gr.Column(variant='panel'):
-                                with gr.Row():
-                                    noise_gate_threshold = gr.Slider(-60, 0, value=-30, label='Threshold', info='This parameter sets the threshold level in decibels below which the signal is considered noise. When the signal drops below this threshold, the noise gate activates and reduces the signal level.')
-                                    noise_gate_ratio = gr.Slider(1, 20, value=6, label='Ratio', info='This parameter sets the level of noise reduction. A higher value means more noise reduction.')
-                                with gr.Row():
-                                    noise_gate_attack = gr.Slider(0, 100, value=10, label='Attack Time (ms)', info='This parameter controls the speed at which the noise gate opens when the sound becomes loud enough. A higher value means the gate opens slower.')
-                                    noise_gate_release = gr.Slider(0, 1000, value=100, label='Release Time (ms)', info='This parameter controls the speed at which the noise gate closes when the sound becomes quiet enough. A higher value means the gate closes slower.')
-
-            process_btn.click(add_audio_effects,
-                            inputs=[vocal_input, instrumental_input, reverb_rm_size, reverb_wet, reverb_dry, reverb_damping,
-                            reverb_width, low_shelf_gain, high_shelf_gain, compressor_ratio, compressor_threshold,
-                            noise_gate_threshold, noise_gate_ratio, noise_gate_attack, noise_gate_release,
-                            chorus_rate_hz, chorus_depth, chorus_centre_delay_ms, chorus_feedback, chorus_mix,
-                            output_format, vocal_gain, instrumental_gain],
-                            outputs=[ai_cover])
-
-            default_values = [0, 0, 0.15, 1.0, 0.1, 0.8, 0.7, 0, 0, 0, 0, 0, 4, -16, 0, 0, -30, 6, 10, 100]
-            clear_btn.click(lambda: default_values,
-                            outputs=[vocal_gain, instrumental_gain, reverb_rm_size, reverb_width, reverb_wet, reverb_dry, reverb_damping,
-                            chorus_rate_hz, chorus_depth, chorus_centre_delay_ms, chorus_feedback, chorus_mix,
-                            compressor_ratio, compressor_threshold, low_shelf_gain, high_shelf_gain, noise_gate_threshold,
-                            noise_gate_ratio, noise_gate_attack, noise_gate_release])
-
+        
         with gr.Tab('RVC Model Options'):
             with gr.Tab('Download Models from Link'):
                 with gr.Row():
